@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head>
+<html lang="pt-BR">
+<head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard &amp; Mapa de Evolução - LD CGH Ponente</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dashboard & Mapa de Evolução - LD CGH Ponente</title>
   
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <!-- html2canvas para captura de tela em alta definição -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   
   <style>
@@ -27,38 +27,52 @@
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
       background-color: var(--bg-color);
       color: var(--text-main);
-      padding: 24px;
+      padding: 12px;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 24px;
+      }
     }
 
     #capture-area {
       background-color: var(--bg-color);
-      padding: 4px;
+      padding: 2px;
     }
 
     .header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
       padding-bottom: 16px;
       border-bottom: 1px solid var(--card-border);
-      flex-wrap: wrap;
-      gap: 14px;
+    }
+
+    @media (min-width: 768px) {
+      .header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
     }
 
     .header-title h1 {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 700;
       color: var(--text-main);
+      line-height: 1.3;
     }
 
     .header-title p {
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
       margin-top: 4px;
     }
@@ -66,26 +80,28 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
     .badge-concessionaria {
       background: #0369a1;
       color: #e0f2fe;
-      padding: 6px 14px;
+      padding: 5px 12px;
       border-radius: 9999px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;
       display: inline-block;
+      width: fit-content;
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
-      padding: 8px 14px;
+      padding: 10px 14px;
       border-radius: 8px;
       font-size: 0.825rem;
       font-weight: 600;
@@ -93,47 +109,45 @@
       border: 1px solid transparent;
       transition: all 0.2s ease;
       text-decoration: none;
+      flex: 1 1 auto;
+      min-height: 42px;
     }
 
-    .btn-save {
-      background: #059669;
-      color: #ffffff;
-      border-color: #10b981;
-    }
-    .btn-save:hover {
-      background: #047857;
-    }
-
-    .btn-download-html {
-      background: #2563eb;
-      color: #ffffff;
-      border-color: #3b82f6;
-    }
-    .btn-download-html:hover {
-      background: #1d4ed8;
+    @media (min-width: 768px) {
+      .btn {
+        flex: 0 0 auto;
+        min-height: auto;
+        padding: 8px 14px;
+      }
     }
 
-    .btn-download-print {
-      background: #475569;
-      color: #f8fafc;
-      border-color: #64748b;
-    }
-    .btn-download-print:hover {
-      background: #334155;
-    }
+    .btn-save { background: #059669; color: #ffffff; border-color: #10b981; }
+    .btn-save:hover { background: #047857; }
+    .btn-download-html { background: #2563eb; color: #ffffff; border-color: #3b82f6; }
+    .btn-download-html:hover { background: #1d4ed8; }
+    .btn-download-print { background: #475569; color: #f8fafc; border-color: #64748b; }
+    .btn-download-print:hover { background: #334155; }
 
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
     }
 
     .kpi-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 18px;
+      border-radius: 10px;
+      padding: 14px;
       position: relative;
     }
 
@@ -152,34 +166,43 @@
     .kpi-card.purple::before { background: var(--accent-purple); }
 
     .kpi-title {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 8px;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
     }
 
     .kpi-value {
-      font-size: 1.8rem;
+      font-size: 1.35rem;
       font-weight: 700;
     }
 
+    @media (min-width: 768px) {
+      .kpi-value {
+        font-size: 1.8rem;
+      }
+    }
+
     .kpi-sub {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
-      margin-top: 6px;
+      margin-top: 4px;
     }
 
     .main-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 20px;
-      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 16px;
+      margin-bottom: 20px;
     }
 
-    @media (max-width: 1024px) {
+    @media (min-width: 1024px) {
       .main-grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+        margin-bottom: 24px;
       }
     }
 
@@ -187,44 +210,56 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 24px;
+      padding: 16px;
+      margin-bottom: 20px;
     }
 
     .panel-header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+
+    @media (min-width: 768px) {
+      .panel-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
     }
 
     .panel-title {
-      font-size: 1.05rem;
+      font-size: 0.95rem;
       font-weight: 600;
     }
 
     .table-responsive {
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -8px;
+      padding: 0 8px;
     }
 
     table {
       width: 100%;
+      min-width: 580px;
       border-collapse: collapse;
       text-align: left;
-      font-size: 0.875rem;
+      font-size: 0.825rem;
     }
 
     th {
       color: var(--text-muted);
       font-weight: 600;
-      padding: 10px 12px;
+      padding: 8px 10px;
       border-bottom: 1px solid var(--card-border);
       text-transform: uppercase;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
     }
 
     td {
-      padding: 12px;
+      padding: 10px;
       border-bottom: 1px solid #283548;
       vertical-align: middle;
     }
@@ -236,7 +271,7 @@
     .progress-bar-container {
       width: 100%;
       background: #0f172a;
-      height: 8px;
+      height: 7px;
       border-radius: 4px;
       overflow: hidden;
       margin-top: 4px;
@@ -250,11 +285,11 @@
     }
 
     input.input-exec {
-      width: 80px;
+      width: 75px;
       background: #0f172a;
       border: 1px solid var(--card-border);
       color: #fff;
-      padding: 6px 8px;
+      padding: 8px 6px;
       border-radius: 6px;
       font-size: 0.85rem;
       text-align: right;
@@ -274,18 +309,33 @@
     }
 
     #map-container {
-      height: 480px;
+      height: 380px;
       border-radius: 8px;
       border: 1px solid var(--card-border);
       z-index: 1;
     }
 
+    @media (min-width: 768px) {
+      #map-container {
+        height: 500px;
+      }
+    }
+
     .map-legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 12px;
-      font-size: 0.8rem;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+      font-size: 0.75rem;
+    }
+
+    @media (min-width: 768px) {
+      .map-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 0.8rem;
+      }
     }
 
     .legend-item {
@@ -298,15 +348,18 @@
       width: 12px;
       height: 12px;
       border-radius: 50%;
+      flex-shrink: 0;
     }
 
     .status-select {
       background: #0f172a;
       color: #f8fafc;
       border: 1px solid var(--card-border);
-      padding: 6px 8px;
+      padding: 8px 10px;
       border-radius: 6px;
       font-size: 0.85rem;
+      width: 100%;
+      margin-top: 4px;
       cursor: pointer;
     }
 
@@ -320,6 +373,7 @@
       color: #f8fafc;
       border: 1px solid var(--card-border);
       border-radius: 8px;
+      padding: 4px;
     }
     .leaflet-popup-tip {
       background: #1e293b;
@@ -327,21 +381,33 @@
 
     #toast-msg {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
       background: #10b981;
       color: #fff;
-      padding: 12px 20px;
+      padding: 12px 16px;
       border-radius: 8px;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-      font-size: 0.875rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+      font-size: 0.825rem;
       font-weight: 600;
+      text-align: center;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s ease, transform 0.3s ease;
       transform: translateY(10px);
       z-index: 9999;
     }
+
+    @media (min-width: 768px) {
+      #toast-msg {
+        left: auto;
+        right: 24px;
+        bottom: 24px;
+        min-width: 260px;
+      }
+    }
+
     #toast-msg.show {
       opacity: 1;
       transform: translateY(0);
@@ -353,44 +419,38 @@
   <div id="capture-area">
     <header class="header">
       <div class="header-title">
-        <h1>Linha de Distribuição - CGH Ponente (13,8 / 34,5 kV)</h1>
+        <h1>Linha de Distribuição - CGH Ponente (34,5 kV)</h1>
         <p>Jataí/GO • Conexão Equatorial GO • Processo: SS155615015-EX</p>
       </div>
 
       <div class="header-actions">
         <span class="badge-concessionaria">Acompanhamento de Campo</span>
-        <button type="button" class="btn btn-save" onclick="salvarDados()">
-          💾 Salvar
-        </button>
-        <button type="button" class="btn btn-download-html" onclick="baixarHTML()">
-          ⬇️ Baixar HTML
-        </button>
-        <button type="button" class="btn btn-download-print" onclick="baixarPrintComDashboard()">
-          📷 Baixar Print com Dashboard
-        </button>
+        <button type="button" class="btn btn-save" onclick="salvarDados()">💾 Salvar</button>
+        <button type="button" class="btn btn-download-html" onclick="baixarHTML()">⬇️ Baixar HTML</button>
+        <button type="button" class="btn btn-download-print" onclick="baixarPrintComDashboard()">📷 Print</button>
       </div>
     </header>
 
     <section class="kpi-grid">
       <div class="kpi-card blue">
-        <div class="kpi-title">Extensão Total do Tronco</div>
-        <div class="kpi-value">12,96 <span style="font-size:1rem; font-weight:normal;">km</span></div>
-        <div class="kpi-sub">Polilinha aprovada Equatorial</div>
+        <div class="kpi-title">Extensão Total</div>
+        <div class="kpi-value">12,96 <span style="font-size:0.85rem; font-weight:normal;">km</span></div>
+        <div class="kpi-sub">Polilinha aprovada</div>
       </div>
       <div class="kpi-card green">
-        <div class="kpi-title">Avanço Físico Ponderado</div>
-        <div class="kpi-value" id="kpi-total-progress">39.8%</div>
-        <div class="kpi-sub">Total recalculado (6 macroetapas)</div>
+        <div class="kpi-title">Avanço Físico</div>
+        <div class="kpi-value" id="kpi-total-progress">0.0%</div>
+        <div class="kpi-sub">Total recalculado</div>
       </div>
       <div class="kpi-card yellow">
-        <div class="kpi-title">Postes Implantados</div>
-        <div class="kpi-value" id="kpi-postes-implantados">93 / 150</div>
-        <div class="kpi-sub" id="kpi-cavas-abertas">121 cavas executadas</div>
+        <div class="kpi-title">Implantados</div>
+        <div class="kpi-value" id="kpi-postes-implantados">0 / 150</div>
+        <div class="kpi-sub" id="kpi-cavas-abertas">0 cavas executadas</div>
       </div>
       <div class="kpi-card purple">
-        <div class="kpi-title">Postes Equipados</div>
-        <div class="kpi-value" id="kpi-postes-equipados">68 / 150</div>
-        <div class="kpi-sub">Cruzetas e ferragens montadas</div>
+        <div class="kpi-title">Equipados</div>
+        <div class="kpi-value" id="kpi-postes-equipados">0 / 150</div>
+        <div class="kpi-sub">Ferragens montadas</div>
       </div>
     </section>
 
@@ -398,7 +458,7 @@
       <div class="panel">
         <div class="panel-header">
           <div class="panel-title">Quadro de Medição das Etapas</div>
-          <span style="font-size: 0.75rem; color: var(--text-muted);">As etapas 2, 3 e 4 são sincronizadas via status individual dos postes</span>
+          <span style="font-size: 0.72rem; color: var(--text-muted);">Etapas 2, 3 e 4 sincronizadas pelo status dos postes</span>
         </div>
         <div class="table-responsive">
           <table>
@@ -409,89 +469,11 @@
                 <th style="text-align: right;">Meta</th>
                 <th style="text-align: center;">Peso</th>
                 <th style="text-align: right;">Executado</th>
-                <th style="width: 130px;">Progresso</th>
+                <th style="width: 110px;">Progresso</th>
                 <th style="text-align: right;">Ponderado</th>
               </tr>
             </thead>
-            <tbody id="stages-tbody"><tr>
-          <td><strong>1. Supressão Vegetal e Podas</strong></td>
-          <td style="color: var(--text-muted);">km</td>
-          <td style="text-align: right;">12,96</td>
-          <td style="text-align: center; color: var(--text-muted);">5%</td>
-          <td style="text-align: right;"><input type="number" class="input-exec" min="0" max="12.96" step="any" value="8" onchange="updateStageManual(0, this.value)"></td>
-          <td>
-            <div style="font-size:0.75rem; text-align:right; margin-bottom:2px;">61.7%</div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: 61.72839506172839%;"></div>
-            </div>
-          </td>
-          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">3.09%</td>
-        </tr><tr>
-          <td><strong>2. Abertura de Cavas (Furos)</strong></td>
-          <td style="color: var(--text-muted);">unid</td>
-          <td style="text-align: right;">150</td>
-          <td style="text-align: center; color: var(--text-muted);">15%</td>
-          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.9rem; color: #fff; padding-right: 8px;">121</span></td>
-          <td>
-            <div style="font-size:0.75rem; text-align:right; margin-bottom:2px;">80.7%</div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: 80.66666666666666%;"></div>
-            </div>
-          </td>
-          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">12.10%</td>
-        </tr><tr>
-          <td><strong>3. Engastamento e Aprumo de Postes</strong></td>
-          <td style="color: var(--text-muted);">unid</td>
-          <td style="text-align: right;">150</td>
-          <td style="text-align: center; color: var(--text-muted);">25%</td>
-          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.9rem; color: #fff; padding-right: 8px;">93</span></td>
-          <td>
-            <div style="font-size:0.75rem; text-align:right; margin-bottom:2px;">62.0%</div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: 62%;"></div>
-            </div>
-          </td>
-          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">15.50%</td>
-        </tr><tr>
-          <td><strong>4. Montagem de Estruturas (Equipados)</strong></td>
-          <td style="color: var(--text-muted);">conj</td>
-          <td style="text-align: right;">150</td>
-          <td style="text-align: center; color: var(--text-muted);">20%</td>
-          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.9rem; color: #fff; padding-right: 8px;">68</span></td>
-          <td>
-            <div style="font-size:0.75rem; text-align:right; margin-bottom:2px;">45.3%</div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: 45.33333333333333%;"></div>
-            </div>
-          </td>
-          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">9.07%</td>
-        </tr><tr>
-          <td><strong>5. Lançamento de Condutores MT</strong></td>
-          <td style="color: var(--text-muted);">km</td>
-          <td style="text-align: right;">12,96</td>
-          <td style="text-align: center; color: var(--text-muted);">20%</td>
-          <td style="text-align: right;"><input type="number" class="input-exec" min="0" max="12.96" step="any" value="0" onchange="updateStageManual(4, this.value)"></td>
-          <td>
-            <div style="font-size:0.75rem; text-align:right; margin-bottom:2px;">0.0%</div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: 0%;"></div>
-            </div>
-          </td>
-          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">0.00%</td>
-        </tr><tr>
-          <td><strong>6. Tensionamento, Flecha e Amarração</strong></td>
-          <td style="color: var(--text-muted);">km</td>
-          <td style="text-align: right;">12,96</td>
-          <td style="text-align: center; color: var(--text-muted);">15%</td>
-          <td style="text-align: right;"><input type="number" class="input-exec" min="0" max="12.96" step="any" value="0" onchange="updateStageManual(5, this.value)"></td>
-          <td>
-            <div style="font-size:0.75rem; text-align:right; margin-bottom:2px;">0.0%</div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: 0%;"></div>
-            </div>
-          </td>
-          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">0.00%</td>
-        </tr></tbody>
+            <tbody id="stages-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -502,26 +484,26 @@
             <div class="panel-title">Curva de Realização Geral</div>
           </div>
           <div class="gauge-wrapper">
-            <svg width="180" height="180" viewBox="0 0 160 160">
+            <svg width="160" height="160" viewBox="0 0 160 160">
               <circle cx="80" cy="80" r="70" stroke="#334155" stroke-width="14" fill="transparent"></circle>
-              <circle id="gauge-circle" cx="80" cy="80" r="70" stroke="var(--accent-green)" stroke-width="14" fill="transparent" stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" transform="rotate(-90 80 80)" style="transition: stroke-dashoffset 0.4s; stroke-dashoffset: 265.086;"></circle>
-              <text x="80" y="88" font-size="28" text-anchor="middle" id="gauge-text" fill="#f8fafc" font-weight="700">39.8%</text>
+              <circle id="gauge-circle" cx="80" cy="80" r="70" stroke="var(--accent-green)" stroke-width="14" fill="transparent" stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" transform="rotate(-90 80 80)" style="transition: stroke-dashoffset 0.4s;"></circle>
+              <text x="80" y="88" font-size="26" text-anchor="middle" id="gauge-text" fill="#f8fafc" font-weight="700">0.0%</text>
             </svg>
           </div>
         </div>
-        <div style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:10px; background:#151e2e; border-radius:8px;">
-          O avanço total reflete a execução ponderada das 6 etapas vigentes da LD Ponente.
+        <div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:8px; background:#151e2e; border-radius:8px;">
+          Execução ponderada das 6 etapas vigentes da LD Ponente.
         </div>
       </div>
     </div>
 
     <div class="panel">
       <div class="panel-header">
-        <div class="panel-title">Mapa de Execução Georreferenciado (Poste a Poste)</div>
-        <div style="font-size:0.8rem; color:var(--text-muted);">Clique no poste no mapa para alterar seu status individual</div>
+        <div class="panel-title">Mapa de Execução Georreferenciado</div>
+        <div style="font-size:0.75rem; color:var(--text-muted);">Toque no poste para atualizar o status em campo</div>
       </div>
       
-      <div id="map-container" class="leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0" style="position: relative;"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(0px, 0px, 0px);"><div class="leaflet-pane leaflet-tile-pane"><div class="leaflet-layer " style="z-index: 1; opacity: 1;"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(-654px, -250px, 0px) scale(1);"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2916" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1206px, 318px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2916" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1206px, 62px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2915" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(950px, 318px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2917" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1462px, 318px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2916" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1206px, 574px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2915" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(950px, 62px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2917" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1462px, 62px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2915" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(950px, 574px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2917" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1462px, 574px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2914" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(694px, 318px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2918" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1718px, 318px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2914" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(694px, 62px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2918" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1718px, 62px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2914" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(694px, 574px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2918" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1718px, 574px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2913" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(438px, 318px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2919" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1974px, 318px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2913" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(438px, 62px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2919" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1974px, 62px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2913" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(438px, 574px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2919" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1974px, 574px, 0px); opacity: 1;"></div></div></div><div class="leaflet-pane leaflet-overlay-pane"><canvas class="leaflet-zoom-animated" width="1590" height="574" style="transform: translate3d(-132px, -48px, 0px); width: 1590px; height: 574px;"></canvas></div><div class="leaflet-pane leaflet-shadow-pane"></div><div class="leaflet-pane leaflet-marker-pane"></div><div class="leaflet-pane leaflet-tooltip-pane"></div><div class="leaflet-pane leaflet-popup-pane"></div><div class="leaflet-proxy leaflet-zoom-animated" style="transform: translate3d(746606px, 1.15499e+06px, 0px) scale(4096);"></div></div><div class="leaflet-control-container"><div class="leaflet-top leaflet-left"><div class="leaflet-control-zoom leaflet-bar leaflet-control"><a class="leaflet-control-zoom-in" href="#" title="Zoom in" role="button" aria-label="Zoom in" aria-disabled="false"><span aria-hidden="true">+</span></a><a class="leaflet-control-zoom-out" href="#" title="Zoom out" role="button" aria-label="Zoom out" aria-disabled="false"><span aria-hidden="true">−</span></a></div></div><div class="leaflet-top leaflet-right"></div><div class="leaflet-bottom leaflet-left"></div><div class="leaflet-bottom leaflet-right"><div class="leaflet-control-attribution leaflet-control"><a href="https://leafletjs.com" title="A JavaScript library for interactive maps"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" class="leaflet-attribution-flag"><path fill="#4C7BE1" d="M0 0h12v4H0z"></path><path fill="#FFD500" d="M0 4h12v3H0z"></path><path fill="#E0BC00" d="M0 7h12v1H0z"></path></svg> Leaflet</a> <span aria-hidden="true">|</span> Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and GIS User Community</div></div></div></div>
+      <div id="map-container"></div>
 
       <div class="map-legend">
         <div class="legend-item">
@@ -534,17 +516,17 @@
         </div>
         <div class="legend-item">
           <div class="legend-bullet" style="background: var(--accent-blue);"></div>
-          <span>Poste Engastado / Aprumado</span>
+          <span>Poste Engastado</span>
         </div>
         <div class="legend-item">
           <div class="legend-bullet" style="background: var(--accent-green);"></div>
-          <span>Poste Equipado / Montado</span>
+          <span>Poste Equipado</span>
         </div>
       </div>
     </div>
   </div>
 
-  
+  <div id="toast-msg"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -611,9 +593,9 @@
       if (savedPolesData && savedPolesData[poleId]) {
         initialStatus = savedPolesData[poleId];
       } else {
-        if (idx < 25) initialStatus = "equipado";
-        else if (idx < 42) initialStatus = "engastado";
-        else if (idx < 60) initialStatus = "cava";
+        if (idx < 68) initialStatus = "equipado";
+        else if (idx < 93) initialStatus = "engastado";
+        else if (idx < 121) initialStatus = "cava";
       }
 
       return {
@@ -626,7 +608,7 @@
     });
 
     const defaultStages = [
-      { id: 1, key: "limpeza", name: "1. Supressão Vegetal e Podas", unit: "km", target: 12.96, weight: 0.05, executed: 6.50, auto: false },
+      { id: 1, key: "limpeza", name: "1. Supressão Vegetal e Podas", unit: "km", target: 12.96, weight: 0.05, executed: 8.00, auto: false },
       { id: 2, key: "cavas", name: "2. Abertura de Cavas (Furos)", unit: "unid", target: totalPolesCount, weight: 0.15, executed: 0, auto: true },
       { id: 3, key: "postes", name: "3. Engastamento e Aprumo de Postes", unit: "unid", target: totalPolesCount, weight: 0.25, executed: 0, auto: true },
       { id: 4, key: "estruturas", name: "4. Montagem de Estruturas (Equipados)", unit: "conj", target: totalPolesCount, weight: 0.20, executed: 0, auto: true },
@@ -641,29 +623,33 @@
       return st;
     });
 
-    let map = L.map('map-container', { preferCanvas: true }).setView([-17.963, -51.835], 12);
+    let map = L.map('map-container', { 
+      preferCanvas: true,
+      tap: true,
+      touchZoom: true
+    }).setView([-17.963, -51.835], 12);
 
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and GIS User Community',
+      attribution: 'Tiles &copy; Esri',
       maxZoom: 18,
       crossOrigin: true
     }).addTo(map);
 
     let trackLine = L.polyline(poleCoordsRaw, { color: '#64748b', weight: 3, opacity: 0.8 }).addTo(map);
-    map.fitBounds(trackLine.getBounds());
+    map.fitBounds(trackLine.getBounds(), { padding: [20, 20] });
 
     let markerLayerGroup = L.layerGroup().addTo(map);
 
     function getStatusVisual(status) {
       switch(status) {
         case "equipado":
-          return { color: "#22c55e", label: "Poste Equipado e Montado" };
+          return { color: "#22c55e", label: "Poste Equipado" };
         case "engastado":
-          return { color: "#38bdf8", label: "Poste Engastado / Aprumado" };
+          return { color: "#38bdf8", label: "Poste Engastado" };
         case "cava":
           return { color: "#eab308", label: "Cava Aberta" };
         default:
-          return { color: "#ef4444", label: "Aguardando Escavação (Pendente)" };
+          return { color: "#ef4444", label: "Pendente" };
       }
     }
 
@@ -678,11 +664,14 @@
     function renderMapMarkers() {
       markerLayerGroup.clearLayers();
 
+      const isMobile = window.innerWidth < 768;
+      const markerRadius = isMobile ? 7 : 5.5;
+
       poles.forEach((pole) => {
         const visual = getStatusVisual(pole.status);
 
         const circleMarker = L.circleMarker([pole.lat, pole.lng], {
-          radius: 5.5,
+          radius: markerRadius,
           fillColor: visual.color,
           color: "#ffffff",
           weight: 1.5,
@@ -691,12 +680,11 @@
         });
 
         const popupContent = `
-          <div style="font-size: 0.85rem; line-height: 1.4;">
-            <strong style="font-size: 0.95rem; color: #38bdf8;">Poste ID: ${pole.id}</strong><br>
-            <span style="color: #94a3b8;">Vértice:</span> #${pole.index + 1}<br>
-            <span style="color: #94a3b8;">Coord:</span> ${pole.lat.toFixed(5)}, ${pole.lng.toFixed(5)}<br>
+          <div style="font-size: 0.85rem; line-height: 1.4; padding: 2px;">
+            <strong style="font-size: 1rem; color: #38bdf8;">${pole.id}</strong> (Vértice #${pole.index + 1})<br>
+            <span style="color: #94a3b8; font-size: 0.75rem;">${pole.lat.toFixed(5)}, ${pole.lng.toFixed(5)}</span><br>
             <div style="margin-top: 8px;">
-              <label style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; display: block; margin-bottom: 2px;">Alterar Status:</label>
+              <label style="font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Alterar Status:</label>
               <select class="status-select" onchange="setPoleStatus('${pole.id}', this.value)">
                 <option value="pendente" ${pole.status === 'pendente' ? 'selected' : ''}>Pendente</option>
                 <option value="cava" ${pole.status === 'cava' ? 'selected' : ''}>Cava Aberta</option>
@@ -707,7 +695,7 @@
           </div>
         `;
 
-        circleMarker.bindPopup(popupContent);
+        circleMarker.bindPopup(popupContent, { maxWidth: 240 });
         markerLayerGroup.addLayer(circleMarker);
       });
     }
@@ -744,7 +732,7 @@
 
         const row = document.createElement("tr");
         const inputField = stage.auto
-          ? `<span style="font-weight: 600; font-size: 0.9rem; color: #fff; padding-right: 8px;">${stage.executed}</span>`
+          ? `<span style="font-weight: 600; font-size: 0.85rem; color: #fff; padding-right: 4px;">${stage.executed}</span>`
           : `<input type="number" class="input-exec" min="0" max="${stage.target}" step="any" 
                     value="${stage.executed}" onchange="updateStageManual(${index}, this.value)">`;
 
@@ -755,7 +743,7 @@
           <td style="text-align: center; color: var(--text-muted);">${(stage.weight * 100).toFixed(0)}%</td>
           <td style="text-align: right;">${inputField}</td>
           <td>
-            <div style="font-size:0.75rem; text-align:right; margin-bottom:2px;">${percentage.toFixed(1)}%</div>
+            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">${percentage.toFixed(1)}%</div>
             <div class="progress-bar-container">
               <div class="progress-bar-fill" style="width: ${percentage}%;"></div>
             </div>
@@ -794,7 +782,6 @@
       }, 3000);
     }
 
-    // 1. Salvar no localStorage do navegador
     function salvarDados() {
       const polesStatusMap = {};
       poles.forEach(p => {
@@ -815,7 +802,6 @@
       }
     }
 
-    // 2. Baixar arquivo HTML atualizado e autônomo
     function baixarHTML() {
       const docClone = document.documentElement.cloneNode(true);
       const toastClone = docClone.querySelector("#toast-msg");
@@ -837,10 +823,9 @@
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(link.href);
-      showToast("Download do arquivo HTML iniciado!");
+      showToast("Download do arquivo iniciado!");
     }
 
-    // 3. Baixar print completo (Dashboard + Mapa) em alta resolução PNG
     async function baixarPrintComDashboard() {
       showToast("Gerando print do dashboard, aguarde...");
       const captureElem = document.getElementById("capture-area");
@@ -881,5 +866,5 @@
 
     calculateProgress();
   </script>
-
-</body></html>
+</body>
+</html>
