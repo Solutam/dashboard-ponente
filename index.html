@@ -123,6 +123,8 @@
 
     .btn-save { background: #059669; color: #ffffff; border-color: #10b981; }
     .btn-save:hover { background: #047857; }
+    .btn-config { background: #334155; color: #f8fafc; border-color: #475569; }
+    .btn-config:hover { background: #475569; }
     .btn-download-html { background: #2563eb; color: #ffffff; border-color: #3b82f6; }
     .btn-download-html:hover { background: #1d4ed8; }
     .btn-download-print { background: #475569; color: #f8fafc; border-color: #64748b; }
@@ -412,6 +414,86 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Modal de Configuração do GitHub */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-box h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .modal-box p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .form-group input {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -425,7 +507,8 @@
 
       <div class="header-actions">
         <span class="badge-concessionaria">Acompanhamento de Campo</span>
-        <button type="button" class="btn btn-save" onclick="salvarDados()">💾 Salvar</button>
+        <button type="button" class="btn btn-save" id="btn-save-main" onclick="salvarProgressoTotal()">💾 Salvar</button>
+        <button type="button" class="btn btn-config" onclick="abrirModalConfig()">⚙️ GitHub</button>
         <button type="button" class="btn btn-download-html" onclick="baixarHTML()">⬇️ Baixar HTML</button>
         <button type="button" class="btn btn-download-print" onclick="baixarPrintComDashboard()">📷 Print</button>
       </div>
@@ -526,6 +609,34 @@
     </div>
   </div>
 
+  <!-- Modal de Configuração do GitHub -->
+  <div class="modal-overlay" id="modal-config">
+    <div class="modal-box">
+      <h3>Sincronização com GitHub</h3>
+      <p>Configure uma única vez no seu aparelho para que o botão "Salvar" faça o commit automático no repositório.</p>
+      
+      <div class="form-group">
+        <label>Utilizador GitHub</label>
+        <input type="text" id="cfg-owner" placeholder="Ex: seu-usuario">
+      </div>
+      
+      <div class="form-group">
+        <label>Nome do Repositório</label>
+        <input type="text" id="cfg-repo" placeholder="Ex: dashboard-ponente">
+      </div>
+      
+      <div class="form-group">
+        <label>Personal Access Token (PAT)</label>
+        <input type="password" id="cfg-token" placeholder="ghp_... ou github_pat_...">
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-save" onclick="salvarConfiguracoes()">Salvar Configurações</button>
+        <button type="button" class="btn btn-config" onclick="fecharModalConfig()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast-msg"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -575,6 +686,7 @@
     const totalPolesCount = poleCoordsRaw.length;
     const STORAGE_KEY_POLES = "cgh_ponente_poles_data";
     const STORAGE_KEY_STAGES = "cgh_ponente_stages_data";
+    const STORAGE_KEY_CONFIG = "cgh_ponente_gh_config";
 
     let savedPolesData = null;
     let savedStagesData = null;
@@ -642,14 +754,10 @@
 
     function getStatusVisual(status) {
       switch(status) {
-        case "equipado":
-          return { color: "#22c55e", label: "Poste Equipado" };
-        case "engastado":
-          return { color: "#38bdf8", label: "Poste Engastado" };
-        case "cava":
-          return { color: "#eab308", label: "Cava Aberta" };
-        default:
-          return { color: "#ef4444", label: "Pendente" };
+        case "equipado": return { color: "#22c55e", label: "Poste Equipado" };
+        case "engastado": return { color: "#38bdf8", label: "Poste Engastado" };
+        case "cava": return { color: "#eab308", label: "Cava Aberta" };
+        default: return { color: "#ef4444", label: "Pendente" };
       }
     }
 
@@ -706,15 +814,9 @@
       let equipadosCount = 0;
 
       poles.forEach(p => {
-        if (p.status === "cava" || p.status === "engastado" || p.status === "equipado") {
-          cavasCount++;
-        }
-        if (p.status === "engastado" || p.status === "equipado") {
-          engastadosCount++;
-        }
-        if (p.status === "equipado") {
-          equipadosCount++;
-        }
+        if (p.status === "cava" || p.status === "engastado" || p.status === "equipado") cavasCount++;
+        if (p.status === "engastado" || p.status === "equipado") engastadosCount++;
+        if (p.status === "equipado") equipadosCount++;
       });
 
       stages.find(s => s.key === "cavas").executed = cavasCount;
@@ -779,33 +881,48 @@
       toast.classList.add("show");
       setTimeout(() => {
         toast.classList.remove("show");
-      }, 3000);
+      }, 3500);
     }
 
-    function salvarDados() {
-      const polesStatusMap = {};
-      poles.forEach(p => {
-        polesStatusMap[p.id] = p.status;
-      });
+    /* Gestão do Modal e Configuração */
+    function abrirModalConfig() {
+      const cfg = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG) || "{}");
+      document.getElementById("cfg-owner").value = cfg.owner || "";
+      document.getElementById("cfg-repo").value = cfg.repo || "";
+      document.getElementById("cfg-token").value = cfg.token || "";
+      document.getElementById("modal-config").classList.add("active");
+    }
 
-      const stagesMap = {};
-      stages.forEach(st => {
-        stagesMap[st.key] = st.executed;
-      });
+    function fecharModalConfig() {
+      document.getElementById("modal-config").classList.remove("active");
+    }
 
-      try {
-        localStorage.setItem(STORAGE_KEY_POLES, JSON.stringify(polesStatusMap));
-        localStorage.setItem(STORAGE_KEY_STAGES, JSON.stringify(stagesMap));
-        showToast("Progresso salvo com sucesso!");
-      } catch(e) {
-        showToast("Erro ao salvar no armazenamento local.");
+    function salvarConfiguracoes() {
+      const owner = document.getElementById("cfg-owner").value.trim();
+      const repo = document.getElementById("cfg-repo").value.trim();
+      const token = document.getElementById("cfg-token").value.trim();
+
+      if (!owner || !repo || !token) {
+        alert("Preencha todos os campos da configuração.");
+        return;
       }
+
+      localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify({ owner, repo, token }));
+      fecharModalConfig();
+      showToast("Configurações do GitHub salvas localmente!");
     }
 
-    function baixarHTML() {
+    function gerarHTMLAtualizado() {
       const docClone = document.documentElement.cloneNode(true);
+      
       const toastClone = docClone.querySelector("#toast-msg");
       if (toastClone) toastClone.remove();
+
+      const modalClone = docClone.querySelector("#modal-config");
+      if (modalClone) {
+        modalClone.querySelectorAll("input").forEach(inp => inp.setAttribute("value", ""));
+        modalClone.classList.remove("active");
+      }
 
       docClone.querySelectorAll("input.input-exec").forEach((inp, idx) => {
         const manualStages = stages.filter(s => !s.auto);
@@ -814,7 +931,95 @@
         }
       });
 
-      const blob = new Blob(["<!DOCTYPE html>\n" + docClone.outerHTML], { type: "text/html;charset=utf-8" });
+      return "<!DOCTYPE html>\n" + docClone.outerHTML;
+    }
+
+    /* Salvar localmente e no GitHub */
+    async function salvarProgressoTotal() {
+      // 1. Salvar no localStorage primeiro
+      const polesStatusMap = {};
+      poles.forEach(p => { polesStatusMap[p.id] = p.status; });
+
+      const stagesMap = {};
+      stages.forEach(st => { stagesMap[st.key] = st.executed; });
+
+      try {
+        localStorage.setItem(STORAGE_KEY_POLES, JSON.stringify(polesStatusMap));
+        localStorage.setItem(STORAGE_KEY_STAGES, JSON.stringify(stagesMap));
+      } catch(e) {
+        console.warn("Erro ao salvar no localStorage");
+      }
+
+      // 2. Verificar credenciais do GitHub
+      const cfg = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG) || "{}");
+      if (!cfg.owner || !cfg.repo || !cfg.token) {
+        showToast("Salvo localmente! Para sincronizar online, clique em '⚙️ GitHub'.");
+        return;
+      }
+
+      const saveBtn = document.getElementById("btn-save-main");
+      saveBtn.innerText = "⏳ Sincronizando...";
+      saveBtn.disabled = true;
+
+      try {
+        const filePath = "index.html";
+        const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${filePath}`;
+        
+        // Obter SHA atual do index.html
+        const getRes = await fetch(apiUrl, {
+          headers: {
+            "Authorization": `Bearer ${cfg.token}`,
+            "Accept": "application/vnd.github.v3+json"
+          }
+        });
+
+        if (!getRes.ok) {
+          throw new Error(`Repositório ou arquivo não encontrado (Status: ${getRes.status})`);
+        }
+
+        const getData = await getRes.json();
+        const currentSha = getData.sha;
+
+        // Converter o HTML completo para Base64 com suporte UTF-8
+        const fullHtml = gerarHTMLAtualizado();
+        const utf8Bytes = new TextEncoder().encode(fullHtml);
+        let binaryString = "";
+        utf8Bytes.forEach(byte => binaryString += String.fromCharCode(byte));
+        const base64Content = btoa(binaryString);
+
+        // Enviar commit via API
+        const putRes = await fetch(apiUrl, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${cfg.token}`,
+            "Content-Type": "application/json",
+            "Accept": "application/vnd.github.v3+json"
+          },
+          body: JSON.stringify({
+            message: `Atualização de medição via Dashboard [${new Date().toLocaleDateString('pt-BR')}]`,
+            content: base64Content,
+            sha: currentSha
+          })
+        });
+
+        if (putRes.ok) {
+          showToast("✅ Publicado com sucesso no GitHub!");
+        } else {
+          const errData = await putRes.json();
+          throw new Error(errData.message || "Falha na sincronização");
+        }
+      } catch (err) {
+        console.error("Erro na sincronização:", err);
+        showToast("⚠️ Salvo localmente, mas falhou no GitHub: " + err.message);
+      } finally {
+        saveBtn.innerText = "💾 Salvar";
+        saveBtn.disabled = false;
+      }
+    }
+
+    function baixarHTML() {
+      const fullHtml = gerarHTMLAtualizado();
+      const blob = new Blob([fullHtml], { type: "text/html;charset=utf-8" });
       const link = document.createElement("a");
       const dataStr = new Date().toISOString().slice(0, 10);
       link.href = URL.createObjectURL(blob);
@@ -843,9 +1048,7 @@
         });
 
         canvas.toBlob((blob) => {
-          if (!blob) {
-            throw new Error("Falha na geração do Blob de imagem.");
-          }
+          if (!blob) throw new Error("Falha na geração do Blob de imagem.");
           const link = document.createElement("a");
           const dataStr = new Date().toISOString().slice(0, 10);
           const url = URL.createObjectURL(blob);
