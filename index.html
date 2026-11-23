@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
+<html lang="pt-BR"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dashboard & Mapa de Evolução - LD CGH Ponente</title>
+  <title>Dashboard &amp; Mapa de Evolução - LD CGH Ponente</title>
   
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -20,6 +19,8 @@
       --accent-yellow: #eab308;
       --accent-purple: #a855f7;
       --accent-red: #ef4444;
+      --accent-orange: #f97316;
+      --accent-cyan: #06b6d4;
     }
 
     * {
@@ -495,8 +496,8 @@
       margin-top: 20px;
     }
   </style>
-</head>
-<body>
+<meta id="dcngeagmmhegagicpcmpinaoklddcgon"></head>
+<body class="">
 
   <div id="capture-area">
     <header class="header">
@@ -522,18 +523,18 @@
       </div>
       <div class="kpi-card green">
         <div class="kpi-title">Avanço Físico</div>
-        <div class="kpi-value" id="kpi-total-progress">0.0%</div>
+        <div class="kpi-value" id="kpi-total-progress">60.3%</div>
         <div class="kpi-sub">Total recalculado</div>
       </div>
       <div class="kpi-card yellow">
         <div class="kpi-title">Implantados</div>
-        <div class="kpi-value" id="kpi-postes-implantados">0 / 150</div>
-        <div class="kpi-sub" id="kpi-cavas-abertas">0 cavas executadas</div>
+        <div class="kpi-value" id="kpi-postes-implantados">131 / 150</div>
+        <div class="kpi-sub" id="kpi-cavas-abertas">139 cavas executadas</div>
       </div>
       <div class="kpi-card purple">
         <div class="kpi-title">Equipados</div>
-        <div class="kpi-value" id="kpi-postes-equipados">0 / 150</div>
-        <div class="kpi-sub">Ferragens montadas</div>
+        <div class="kpi-value" id="kpi-postes-equipados">106 / 150</div>
+        <div class="kpi-sub" id="kpi-cabos-status">49 lançados • 0 travados</div>
       </div>
     </section>
 
@@ -541,7 +542,7 @@
       <div class="panel">
         <div class="panel-header">
           <div class="panel-title">Quadro de Medição das Etapas</div>
-          <span style="font-size: 0.72rem; color: var(--text-muted);">Etapas 2, 3 e 4 sincronizadas pelo status dos postes</span>
+          <span style="font-size: 0.72rem; color: var(--text-muted);">Etapas 2 a 6 sincronizadas pelo status dos postes no mapa</span>
         </div>
         <div class="table-responsive">
           <table>
@@ -556,7 +557,85 @@
                 <th style="text-align: right;">Ponderado</th>
               </tr>
             </thead>
-            <tbody id="stages-tbody"></tbody>
+            <tbody id="stages-tbody"><tr>
+          <td><strong>1. Supressão Vegetal e Podas</strong></td>
+          <td style="color: var(--text-muted);">km</td>
+          <td style="text-align: right;">12,96</td>
+          <td style="text-align: center; color: var(--text-muted);">5%</td>
+          <td style="text-align: right;"><input type="number" class="input-exec" min="0" max="12.96" step="any" value="10" onchange="updateStageManual(0, this.value)"></td>
+          <td>
+            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">77.2%</div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 77.1604938271605%;"></div>
+            </div>
+          </td>
+          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">3.86%</td>
+        </tr><tr>
+          <td><strong>2. Abertura de Cavas (Furos)</strong></td>
+          <td style="color: var(--text-muted);">unid</td>
+          <td style="text-align: right;">150</td>
+          <td style="text-align: center; color: var(--text-muted);">15%</td>
+          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.85rem; color: #fff; padding-right: 4px;">139</span></td>
+          <td>
+            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">92.7%</div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 92.66666666666666%;"></div>
+            </div>
+          </td>
+          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">13.90%</td>
+        </tr><tr>
+          <td><strong>3. Engastamento e Aprumo de Postes</strong></td>
+          <td style="color: var(--text-muted);">unid</td>
+          <td style="text-align: right;">150</td>
+          <td style="text-align: center; color: var(--text-muted);">25%</td>
+          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.85rem; color: #fff; padding-right: 4px;">131</span></td>
+          <td>
+            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">87.3%</div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 87.33333333333333%;"></div>
+            </div>
+          </td>
+          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">21.83%</td>
+        </tr><tr>
+          <td><strong>4. Montagem de Estruturas (Equipados)</strong></td>
+          <td style="color: var(--text-muted);">conj</td>
+          <td style="text-align: right;">150</td>
+          <td style="text-align: center; color: var(--text-muted);">20%</td>
+          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.85rem; color: #fff; padding-right: 4px;">106</span></td>
+          <td>
+            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">70.7%</div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 70.66666666666667%;"></div>
+            </div>
+          </td>
+          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">14.13%</td>
+        </tr><tr>
+          <td><strong>5. Cabo Lançado</strong></td>
+          <td style="color: var(--text-muted);">unid</td>
+          <td style="text-align: right;">150</td>
+          <td style="text-align: center; color: var(--text-muted);">20%</td>
+          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.85rem; color: #fff; padding-right: 4px;">49</span></td>
+          <td>
+            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">32.7%</div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 32.666666666666664%;"></div>
+            </div>
+          </td>
+          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">6.53%</td>
+        </tr><tr>
+          <td><strong>6. Cabo Tensionado e Travado</strong></td>
+          <td style="color: var(--text-muted);">unid</td>
+          <td style="text-align: right;">150</td>
+          <td style="text-align: center; color: var(--text-muted);">15%</td>
+          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.85rem; color: #fff; padding-right: 4px;">0</span></td>
+          <td>
+            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">0.0%</div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 0%;"></div>
+            </div>
+          </td>
+          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">0.00%</td>
+        </tr></tbody>
           </table>
         </div>
       </div>
@@ -569,8 +648,8 @@
           <div class="gauge-wrapper">
             <svg width="160" height="160" viewBox="0 0 160 160">
               <circle cx="80" cy="80" r="70" stroke="#334155" stroke-width="14" fill="transparent"></circle>
-              <circle id="gauge-circle" cx="80" cy="80" r="70" stroke="var(--accent-green)" stroke-width="14" fill="transparent" stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" transform="rotate(-90 80 80)" style="transition: stroke-dashoffset 0.4s;"></circle>
-              <text x="80" y="88" font-size="26" text-anchor="middle" id="gauge-text" fill="#f8fafc" font-weight="700">0.0%</text>
+              <circle id="gauge-circle" cx="80" cy="80" r="70" stroke="var(--accent-green)" stroke-width="14" fill="transparent" stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" transform="rotate(-90 80 80)" style="transition: stroke-dashoffset 0.4s; stroke-dashoffset: 174.865;"></circle>
+              <text x="80" y="88" font-size="26" text-anchor="middle" id="gauge-text" fill="#f8fafc" font-weight="700">60.3%</text>
             </svg>
           </div>
         </div>
@@ -583,10 +662,10 @@
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">Mapa de Execução Georreferenciado</div>
-        <div style="font-size:0.75rem; color:var(--text-muted);">Toque no poste para atualizar o status em campo</div>
+        <div style="font-size:0.75rem; color:var(--text-muted);">Toque no poste para atualizar o status em campo (incluindo cabo)</div>
       </div>
       
-      <div id="map-container"></div>
+      <div id="map-container" class="leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0" style="position: relative;"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(347px, 1333px, 0px);"><div class="leaflet-pane leaflet-tile-pane"><div class="leaflet-layer " style="z-index: 1; opacity: 1;"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 16; transform: translate3d(120px, -508px, 0px) scale(0.25);"></div><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(0px, 0px, 0px) scale(1);"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2916" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(124px, -1058px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2917" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(380px, -1058px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2916" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(124px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2917" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(380px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4513/2916" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(124px, -802px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4513/2917" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(380px, -802px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2915" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-132px, -1058px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2918" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(636px, -1058px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2915" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-132px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2918" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(636px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4513/2915" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-132px, -802px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4513/2918" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(636px, -802px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2914" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-388px, -1058px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2919" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(892px, -1058px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2914" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-388px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2919" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(892px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4513/2914" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-388px, -802px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4513/2919" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(892px, -802px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2916" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(124px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2915" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-132px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2917" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(380px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2914" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-388px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2918" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(636px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2913" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-644px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2913" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-644px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2919" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(892px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2913" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-644px, -1058px, 0px); opacity: 1;"></div></div></div><div class="leaflet-pane leaflet-overlay-pane"><canvas class="leaflet-zoom-animated" width="1604" height="598" style="transform: translate3d(-481px, -1383px, 0px); width: 1604px; height: 598px;"></canvas></div><div class="leaflet-pane leaflet-shadow-pane"></div><div class="leaflet-pane leaflet-marker-pane"></div><div class="leaflet-pane leaflet-tooltip-pane"></div><div class="leaflet-pane leaflet-popup-pane"></div><div class="leaflet-proxy leaflet-zoom-animated" style="transform: translate3d(746694px, 1.15505e+06px, 0px) scale(4096);"></div></div><div class="leaflet-control-container"><div class="leaflet-top leaflet-left"><div class="leaflet-control-zoom leaflet-bar leaflet-control"><a class="leaflet-control-zoom-in" href="#" title="Zoom in" role="button" aria-label="Zoom in" aria-disabled="false"><span aria-hidden="true">+</span></a><a class="leaflet-control-zoom-out" href="#" title="Zoom out" role="button" aria-label="Zoom out" aria-disabled="false"><span aria-hidden="true">−</span></a></div></div><div class="leaflet-top leaflet-right"></div><div class="leaflet-bottom leaflet-left"></div><div class="leaflet-bottom leaflet-right"><div class="leaflet-control-attribution leaflet-control"><a href="https://leafletjs.com" title="A JavaScript library for interactive maps"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" class="leaflet-attribution-flag"><path fill="#4C7BE1" d="M0 0h12v4H0z"></path><path fill="#FFD500" d="M0 4h12v3H0z"></path><path fill="#E0BC00" d="M0 7h12v1H0z"></path></svg> Leaflet</a> <span aria-hidden="true">|</span> Tiles © Esri</div></div></div></div>
 
       <div class="map-legend">
         <div class="legend-item">
@@ -602,8 +681,16 @@
           <span>Poste Engastado</span>
         </div>
         <div class="legend-item">
-          <div class="legend-bullet" style="background: var(--accent-green);"></div>
+          <div class="legend-bullet" style="background: var(--accent-purple);"></div>
           <span>Poste Equipado</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-bullet" style="background: var(--accent-orange);"></div>
+          <span>Cabo Lançado</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-bullet" style="background: var(--accent-green);"></div>
+          <span>Cabo Tensionado e Travado</span>
         </div>
       </div>
     </div>
@@ -617,17 +704,17 @@
       
       <div class="form-group">
         <label>Utilizador GitHub</label>
-        <input type="text" id="cfg-owner" placeholder="Ex: seu-usuario">
+        <input type="text" id="cfg-owner" placeholder="Ex: seu-usuario" value="">
       </div>
       
       <div class="form-group">
         <label>Nome do Repositório</label>
-        <input type="text" id="cfg-repo" placeholder="Ex: dashboard-ponente">
+        <input type="text" id="cfg-repo" placeholder="Ex: dashboard-ponente" value="">
       </div>
       
       <div class="form-group">
         <label>Personal Access Token (PAT)</label>
-        <input type="password" id="cfg-token" placeholder="ghp_... ou github_pat_...">
+        <input type="password" id="cfg-token" placeholder="ghp_... ou github_pat_..." value="">
       </div>
 
       <div class="modal-actions">
@@ -637,7 +724,7 @@
     </div>
   </div>
 
-  <div id="toast-msg"></div>
+  
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -720,12 +807,12 @@
     });
 
     const defaultStages = [
-      { id: 1, key: "limpeza", name: "1. Supressão Vegetal e Podas", unit: "km", target: 12.96, weight: 0.05, executed: 8.00, auto: false },
+      { id: 1, key: "limpeza", name: "1. Supressão Vegetal e Podas", unit: "km", target: 12.96, weight: 0.05, executed: 12.00, auto: false },
       { id: 2, key: "cavas", name: "2. Abertura de Cavas (Furos)", unit: "unid", target: totalPolesCount, weight: 0.15, executed: 0, auto: true },
       { id: 3, key: "postes", name: "3. Engastamento e Aprumo de Postes", unit: "unid", target: totalPolesCount, weight: 0.25, executed: 0, auto: true },
       { id: 4, key: "estruturas", name: "4. Montagem de Estruturas (Equipados)", unit: "conj", target: totalPolesCount, weight: 0.20, executed: 0, auto: true },
-      { id: 5, key: "cabos", name: "5. Lançamento de Condutores MT", unit: "km", target: 12.96, weight: 0.20, executed: 0.00, auto: false },
-      { id: 6, key: "flecha", name: "6. Tensionamento, Flecha e Amarração", unit: "km", target: 12.96, weight: 0.15, executed: 0.00, auto: false }
+      { id: 5, key: "cabo_lancado", name: "5. Cabo Lançado", unit: "unid", target: totalPolesCount, weight: 0.20, executed: 0, auto: true },
+      { id: 6, key: "cabo_tensionado", name: "6. Cabo Tensionado e Travado", unit: "unid", target: totalPolesCount, weight: 0.15, executed: 0, auto: true }
     ];
 
     const stages = defaultStages.map(st => {
@@ -754,7 +841,9 @@
 
     function getStatusVisual(status) {
       switch(status) {
-        case "equipado": return { color: "#22c55e", label: "Poste Equipado" };
+        case "cabo_tensionado": return { color: "#22c55e", label: "Cabo Tensionado e Travado" };
+        case "cabo_lancado": return { color: "#f97316", label: "Cabo Lançado" };
+        case "equipado": return { color: "#a855f7", label: "Poste Equipado" };
         case "engastado": return { color: "#38bdf8", label: "Poste Engastado" };
         case "cava": return { color: "#eab308", label: "Cava Aberta" };
         default: return { color: "#ef4444", label: "Pendente" };
@@ -798,12 +887,14 @@
                 <option value="cava" ${pole.status === 'cava' ? 'selected' : ''}>Cava Aberta</option>
                 <option value="engastado" ${pole.status === 'engastado' ? 'selected' : ''}>Poste Engastado</option>
                 <option value="equipado" ${pole.status === 'equipado' ? 'selected' : ''}>Poste Equipado</option>
+                <option value="cabo_lancado" ${pole.status === 'cabo_lancado' ? 'selected' : ''}>Cabo Lançado</option>
+                <option value="cabo_tensionado" ${pole.status === 'cabo_tensionado' ? 'selected' : ''}>Cabo Tensionado e Travado</option>
               </select>
             </div>
           </div>
         `;
 
-        circleMarker.bindPopup(popupContent, { maxWidth: 240 });
+        circleMarker.bindPopup(popupContent, { maxWidth: 250 });
         markerLayerGroup.addLayer(circleMarker);
       });
     }
@@ -812,16 +903,22 @@
       let cavasCount = 0;
       let engastadosCount = 0;
       let equipadosCount = 0;
+      let caboLancadoCount = 0;
+      let caboTensionadoCount = 0;
 
       poles.forEach(p => {
-        if (p.status === "cava" || p.status === "engastado" || p.status === "equipado") cavasCount++;
-        if (p.status === "engastado" || p.status === "equipado") engastadosCount++;
-        if (p.status === "equipado") equipadosCount++;
+        if (["cava", "engastado", "equipado", "cabo_lancado", "cabo_tensionado"].includes(p.status)) cavasCount++;
+        if (["engastado", "equipado", "cabo_lancado", "cabo_tensionado"].includes(p.status)) engastadosCount++;
+        if (["equipado", "cabo_lancado", "cabo_tensionado"].includes(p.status)) equipadosCount++;
+        if (["cabo_lancado", "cabo_tensionado"].includes(p.status)) caboLancadoCount++;
+        if (p.status === "cabo_tensionado") caboTensionadoCount++;
       });
 
       stages.find(s => s.key === "cavas").executed = cavasCount;
       stages.find(s => s.key === "postes").executed = engastadosCount;
       stages.find(s => s.key === "estruturas").executed = equipadosCount;
+      stages.find(s => s.key === "cabo_lancado").executed = caboLancadoCount;
+      stages.find(s => s.key === "cabo_tensionado").executed = caboTensionadoCount;
 
       let totalWeighted = 0;
       const tbody = document.getElementById("stages-tbody");
@@ -862,6 +959,7 @@
       document.getElementById("kpi-postes-implantados").innerText = `${engastadosCount} / ${totalPolesCount}`;
       document.getElementById("kpi-cavas-abertas").innerText = `${cavasCount} cavas executadas`;
       document.getElementById("kpi-postes-equipados").innerText = `${equipadosCount} / ${totalPolesCount}`;
+      document.getElementById("kpi-cabos-status").innerText = `${caboLancadoCount} lançados • ${caboTensionadoCount} travados`;
 
       const circle = document.getElementById("gauge-circle");
       const offset = 440 - (440 * (totalWeighted / 100));
@@ -936,7 +1034,6 @@
 
     /* Salvar localmente e no GitHub */
     async function salvarProgressoTotal() {
-      // 1. Salvar no localStorage primeiro
       const polesStatusMap = {};
       poles.forEach(p => { polesStatusMap[p.id] = p.status; });
 
@@ -950,7 +1047,6 @@
         console.warn("Erro ao salvar no localStorage");
       }
 
-      // 2. Verificar credenciais do GitHub
       const cfg = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG) || "{}");
       if (!cfg.owner || !cfg.repo || !cfg.token) {
         showToast("Salvo localmente! Para sincronizar online, clique em '⚙️ GitHub'.");
@@ -965,7 +1061,6 @@
         const filePath = "index.html";
         const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${filePath}`;
         
-        // Obter SHA atual do index.html
         const getRes = await fetch(apiUrl, {
           headers: {
             "Authorization": `Bearer ${cfg.token}`,
@@ -980,14 +1075,12 @@
         const getData = await getRes.json();
         const currentSha = getData.sha;
 
-        // Converter o HTML completo para Base64 com suporte UTF-8
         const fullHtml = gerarHTMLAtualizado();
         const utf8Bytes = new TextEncoder().encode(fullHtml);
         let binaryString = "";
         utf8Bytes.forEach(byte => binaryString += String.fromCharCode(byte));
         const base64Content = btoa(binaryString);
 
-        // Enviar commit via API
         const putRes = await fetch(apiUrl, {
           method: "PUT",
           headers: {
@@ -1069,5 +1162,6 @@
 
     calculateProgress();
   </script>
-</body>
-</html>
+
+
+</body></html>
