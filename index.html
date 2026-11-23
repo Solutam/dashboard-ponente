@@ -5,7 +5,9 @@
   <title>Dashboard &amp; Mapa de Evolução - LD CGH Ponente</title>
   
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=Tr8BDbkEstETAiKhq3zZ3U5-pPWeb50hwoJFF45nTrPGtPVPqemvu2DuXi5_6yaaMlZovx3psoqqTuRx4dH5DpKAAwwTramGFd9bx0fkHENQtgK0-UjyjPb5xXgD-fQyCw_pYHFQ2AZsFcGvuJlVj3F3L-KlKQewNPukqi7qNpOHTMhC1bxKFTVjLvu4RLoM1ctassDHN6JFFxRmVCHdZEDcWeVtyM8eIbTHeQsPGMTn4Ov_0iSR-TV7lTEi2oB_lLjUCCZwdJLX6g7wHhguc93uNUBrj5pa0sa-Ldp6646mUqlmqtRAdg5NvEVqzwm7b1NXMS3rHwkM_zVJKejwXA" charset="UTF-8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- SDK Oficial do Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
     :root {
@@ -20,7 +22,6 @@
       --accent-purple: #a855f7;
       --accent-red: #ef4444;
       --accent-orange: #f97316;
-      --accent-cyan: #06b6d4;
     }
 
     * {
@@ -38,9 +39,7 @@
     }
 
     @media (min-width: 768px) {
-      body {
-        padding: 24px;
-      }
+      body { padding: 24px; }
     }
 
     #capture-area {
@@ -182,9 +181,7 @@
     }
 
     @media (min-width: 768px) {
-      .kpi-value {
-        font-size: 1.8rem;
-      }
+      .kpi-value { font-size: 1.8rem; }
     }
 
     .kpi-sub {
@@ -267,9 +264,7 @@
       vertical-align: middle;
     }
 
-    tr:last-child td {
-      border-bottom: none;
-    }
+    tr:last-child td { border-bottom: none; }
 
     .progress-bar-container {
       width: 100%;
@@ -319,9 +314,7 @@
     }
 
     @media (min-width: 768px) {
-      #map-container {
-        height: 500px;
-      }
+      #map-container { height: 500px; }
     }
 
     .map-legend {
@@ -378,9 +371,7 @@
       border-radius: 8px;
       padding: 4px;
     }
-    .leaflet-popup-tip {
-      background: #1e293b;
-    }
+    .leaflet-popup-tip { background: #1e293b; }
 
     #toast-msg {
       position: fixed;
@@ -416,7 +407,6 @@
       transform: translateY(0);
     }
 
-    /* Modal de Configuração do GitHub */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -462,9 +452,7 @@
       margin-bottom: 16px;
     }
 
-    .form-group {
-      margin-bottom: 14px;
-    }
+    .form-group { margin-bottom: 14px; }
 
     .form-group label {
       display: block;
@@ -496,8 +484,8 @@
       margin-top: 20px;
     }
   </style>
-<meta id="dcngeagmmhegagicpcmpinaoklddcgon"></head>
-<body class="">
+</head>
+<body>
 
   <div id="capture-area">
     <header class="header">
@@ -507,9 +495,9 @@
       </div>
 
       <div class="header-actions">
-        <span class="badge-concessionaria">Acompanhamento de Campo</span>
+        <span class="badge-concessionaria" id="sync-status-badge">Acompanhamento de Campo</span>
         <button type="button" class="btn btn-save" id="btn-save-main" onclick="salvarProgressoTotal()">💾 Salvar</button>
-        <button type="button" class="btn btn-config" onclick="abrirModalConfig()">⚙️ GitHub</button>
+        <button type="button" class="btn btn-config" onclick="abrirModalConfig()">⚙️ Supabase</button>
         <button type="button" class="btn btn-download-html" onclick="baixarHTML()">⬇️ Baixar HTML</button>
         <button type="button" class="btn btn-download-print" onclick="baixarPrintComDashboard()">📷 Print</button>
       </div>
@@ -523,18 +511,18 @@
       </div>
       <div class="kpi-card green">
         <div class="kpi-title">Avanço Físico</div>
-        <div class="kpi-value" id="kpi-total-progress">60.3%</div>
+        <div class="kpi-value" id="kpi-total-progress">0.0%</div>
         <div class="kpi-sub">Total recalculado</div>
       </div>
       <div class="kpi-card yellow">
         <div class="kpi-title">Implantados</div>
-        <div class="kpi-value" id="kpi-postes-implantados">131 / 150</div>
-        <div class="kpi-sub" id="kpi-cavas-abertas">139 cavas executadas</div>
+        <div class="kpi-value" id="kpi-postes-implantados">0 / 150</div>
+        <div class="kpi-sub" id="kpi-cavas-abertas">0 cavas executadas</div>
       </div>
       <div class="kpi-card purple">
         <div class="kpi-title">Equipados</div>
-        <div class="kpi-value" id="kpi-postes-equipados">106 / 150</div>
-        <div class="kpi-sub" id="kpi-cabos-status">49 lançados • 0 travados</div>
+        <div class="kpi-value" id="kpi-postes-equipados">0 / 150</div>
+        <div class="kpi-sub" id="kpi-cabos-status">0 lançados • 0 travados</div>
       </div>
     </section>
 
@@ -557,85 +545,7 @@
                 <th style="text-align: right;">Ponderado</th>
               </tr>
             </thead>
-            <tbody id="stages-tbody"><tr>
-          <td><strong>1. Supressão Vegetal e Podas</strong></td>
-          <td style="color: var(--text-muted);">km</td>
-          <td style="text-align: right;">12,96</td>
-          <td style="text-align: center; color: var(--text-muted);">5%</td>
-          <td style="text-align: right;"><input type="number" class="input-exec" min="0" max="12.96" step="any" value="10" onchange="updateStageManual(0, this.value)"></td>
-          <td>
-            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">77.2%</div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: 77.1604938271605%;"></div>
-            </div>
-          </td>
-          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">3.86%</td>
-        </tr><tr>
-          <td><strong>2. Abertura de Cavas (Furos)</strong></td>
-          <td style="color: var(--text-muted);">unid</td>
-          <td style="text-align: right;">150</td>
-          <td style="text-align: center; color: var(--text-muted);">15%</td>
-          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.85rem; color: #fff; padding-right: 4px;">139</span></td>
-          <td>
-            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">92.7%</div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: 92.66666666666666%;"></div>
-            </div>
-          </td>
-          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">13.90%</td>
-        </tr><tr>
-          <td><strong>3. Engastamento e Aprumo de Postes</strong></td>
-          <td style="color: var(--text-muted);">unid</td>
-          <td style="text-align: right;">150</td>
-          <td style="text-align: center; color: var(--text-muted);">25%</td>
-          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.85rem; color: #fff; padding-right: 4px;">131</span></td>
-          <td>
-            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">87.3%</div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: 87.33333333333333%;"></div>
-            </div>
-          </td>
-          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">21.83%</td>
-        </tr><tr>
-          <td><strong>4. Montagem de Estruturas (Equipados)</strong></td>
-          <td style="color: var(--text-muted);">conj</td>
-          <td style="text-align: right;">150</td>
-          <td style="text-align: center; color: var(--text-muted);">20%</td>
-          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.85rem; color: #fff; padding-right: 4px;">106</span></td>
-          <td>
-            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">70.7%</div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: 70.66666666666667%;"></div>
-            </div>
-          </td>
-          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">14.13%</td>
-        </tr><tr>
-          <td><strong>5. Cabo Lançado</strong></td>
-          <td style="color: var(--text-muted);">unid</td>
-          <td style="text-align: right;">150</td>
-          <td style="text-align: center; color: var(--text-muted);">20%</td>
-          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.85rem; color: #fff; padding-right: 4px;">49</span></td>
-          <td>
-            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">32.7%</div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: 32.666666666666664%;"></div>
-            </div>
-          </td>
-          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">6.53%</td>
-        </tr><tr>
-          <td><strong>6. Cabo Tensionado e Travado</strong></td>
-          <td style="color: var(--text-muted);">unid</td>
-          <td style="text-align: right;">150</td>
-          <td style="text-align: center; color: var(--text-muted);">15%</td>
-          <td style="text-align: right;"><span style="font-weight: 600; font-size: 0.85rem; color: #fff; padding-right: 4px;">0</span></td>
-          <td>
-            <div style="font-size:0.72rem; text-align:right; margin-bottom:2px;">0.0%</div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" style="width: 0%;"></div>
-            </div>
-          </td>
-          <td style="text-align: right; font-weight: 600; color: var(--accent-blue);">0.00%</td>
-        </tr></tbody>
+            <tbody id="stages-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -648,8 +558,8 @@
           <div class="gauge-wrapper">
             <svg width="160" height="160" viewBox="0 0 160 160">
               <circle cx="80" cy="80" r="70" stroke="#334155" stroke-width="14" fill="transparent"></circle>
-              <circle id="gauge-circle" cx="80" cy="80" r="70" stroke="var(--accent-green)" stroke-width="14" fill="transparent" stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" transform="rotate(-90 80 80)" style="transition: stroke-dashoffset 0.4s; stroke-dashoffset: 174.865;"></circle>
-              <text x="80" y="88" font-size="26" text-anchor="middle" id="gauge-text" fill="#f8fafc" font-weight="700">60.3%</text>
+              <circle id="gauge-circle" cx="80" cy="80" r="70" stroke="var(--accent-green)" stroke-width="14" fill="transparent" stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" transform="rotate(-90 80 80)" style="transition: stroke-dashoffset 0.4s;"></circle>
+              <text x="80" y="88" font-size="26" text-anchor="middle" id="gauge-text" fill="#f8fafc" font-weight="700">0.0%</text>
             </svg>
           </div>
         </div>
@@ -665,7 +575,7 @@
         <div style="font-size:0.75rem; color:var(--text-muted);">Toque no poste para atualizar o status em campo (incluindo cabo)</div>
       </div>
       
-      <div id="map-container" class="leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0" style="position: relative;"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(347px, 1333px, 0px);"><div class="leaflet-pane leaflet-tile-pane"><div class="leaflet-layer " style="z-index: 1; opacity: 1;"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 16; transform: translate3d(120px, -508px, 0px) scale(0.25);"></div><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(0px, 0px, 0px) scale(1);"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2916" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(124px, -1058px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2917" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(380px, -1058px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2916" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(124px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2917" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(380px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4513/2916" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(124px, -802px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4513/2917" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(380px, -802px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2915" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-132px, -1058px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2918" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(636px, -1058px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2915" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-132px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2918" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(636px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4513/2915" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-132px, -802px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4513/2918" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(636px, -802px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2914" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-388px, -1058px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2919" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(892px, -1058px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2914" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-388px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2919" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(892px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4513/2914" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-388px, -802px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4513/2919" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(892px, -802px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2916" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(124px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2915" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-132px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2917" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(380px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2914" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-388px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2918" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(636px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4511/2913" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-644px, -1314px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2913" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-644px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4510/2919" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(892px, -1570px, 0px); opacity: 1;"><img crossorigin="" alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/4512/2913" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-644px, -1058px, 0px); opacity: 1;"></div></div></div><div class="leaflet-pane leaflet-overlay-pane"><canvas class="leaflet-zoom-animated" width="1604" height="598" style="transform: translate3d(-481px, -1383px, 0px); width: 1604px; height: 598px;"></canvas></div><div class="leaflet-pane leaflet-shadow-pane"></div><div class="leaflet-pane leaflet-marker-pane"></div><div class="leaflet-pane leaflet-tooltip-pane"></div><div class="leaflet-pane leaflet-popup-pane"></div><div class="leaflet-proxy leaflet-zoom-animated" style="transform: translate3d(746694px, 1.15505e+06px, 0px) scale(4096);"></div></div><div class="leaflet-control-container"><div class="leaflet-top leaflet-left"><div class="leaflet-control-zoom leaflet-bar leaflet-control"><a class="leaflet-control-zoom-in" href="#" title="Zoom in" role="button" aria-label="Zoom in" aria-disabled="false"><span aria-hidden="true">+</span></a><a class="leaflet-control-zoom-out" href="#" title="Zoom out" role="button" aria-label="Zoom out" aria-disabled="false"><span aria-hidden="true">−</span></a></div></div><div class="leaflet-top leaflet-right"></div><div class="leaflet-bottom leaflet-left"></div><div class="leaflet-bottom leaflet-right"><div class="leaflet-control-attribution leaflet-control"><a href="https://leafletjs.com" title="A JavaScript library for interactive maps"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" class="leaflet-attribution-flag"><path fill="#4C7BE1" d="M0 0h12v4H0z"></path><path fill="#FFD500" d="M0 4h12v3H0z"></path><path fill="#E0BC00" d="M0 7h12v1H0z"></path></svg> Leaflet</a> <span aria-hidden="true">|</span> Tiles © Esri</div></div></div></div>
+      <div id="map-container"></div>
 
       <div class="map-legend">
         <div class="legend-item">
@@ -696,39 +606,38 @@
     </div>
   </div>
 
-  <!-- Modal de Configuração do GitHub -->
+  <!-- Modal de Configuração do Supabase -->
   <div class="modal-overlay" id="modal-config">
     <div class="modal-box">
-      <h3>Sincronização com GitHub</h3>
-      <p>Configure uma única vez no seu aparelho para que o botão "Salvar" faça o commit automático no repositório.</p>
+      <h3>Conexão com Banco de Dados (Supabase)</h3>
+      <p>Credenciais já configuradas no código-fonte. Caso queira sobrescrever neste aparelho, altere abaixo:</p>
       
       <div class="form-group">
-        <label>Utilizador GitHub</label>
-        <input type="text" id="cfg-owner" placeholder="Ex: seu-usuario" value="">
+        <label>Project URL</label>
+        <input type="text" id="cfg-sb-url" placeholder="https://jodgvjwffnrobesuvkoe.supabase.co">
       </div>
       
       <div class="form-group">
-        <label>Nome do Repositório</label>
-        <input type="text" id="cfg-repo" placeholder="Ex: dashboard-ponente" value="">
-      </div>
-      
-      <div class="form-group">
-        <label>Personal Access Token (PAT)</label>
-        <input type="password" id="cfg-token" placeholder="ghp_... ou github_pat_..." value="">
+        <label>Anon Public Key</label>
+        <input type="password" id="cfg-sb-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6...">
       </div>
 
       <div class="modal-actions">
-        <button type="button" class="btn btn-save" onclick="salvarConfiguracoes()">Salvar Configurações</button>
+        <button type="button" class="btn btn-save" onclick="salvarConfiguracoes()">Salvar e Sincronizar</button>
         <button type="button" class="btn btn-config" onclick="fecharModalConfig()">Cancelar</button>
       </div>
     </div>
   </div>
 
-  
+  <div id="toast-msg">Salvo com sucesso!</div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
+    const DEFAULT_SUPABASE_URL = "https://jodgvjwffnrobesuvkoe.supabase.co"; 
+    const DEFAULT_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpvZGd2andmZm5yb2Jlc3V2a29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU0MzU2NDgsImV4cCI6MjExMTAxMTY0OH0.1OG8B__FcsVGW0Xp0n48tjJS9L_P3gICcokS2sy9E7I"; 
+    const OBRA_ID = "ld-cgh-ponente";
+
     const poleCoordsRaw = [
       [-17.995240, -51.798450], [-17.995906, -51.798724], [-17.996627, -51.799108], [-17.997304, -51.799566],
       [-17.996633, -51.800001], [-17.995911, -51.800389], [-17.995176, -51.800757], [-17.994468, -51.801199],
@@ -773,7 +682,7 @@
     const totalPolesCount = poleCoordsRaw.length;
     const STORAGE_KEY_POLES = "cgh_ponente_poles_data";
     const STORAGE_KEY_STAGES = "cgh_ponente_stages_data";
-    const STORAGE_KEY_CONFIG = "cgh_ponente_gh_config";
+    const STORAGE_KEY_SB = "cgh_ponente_supabase_cfg";
 
     let savedPolesData = null;
     let savedStagesData = null;
@@ -781,9 +690,7 @@
     try {
       savedPolesData = JSON.parse(localStorage.getItem(STORAGE_KEY_POLES));
       savedStagesData = JSON.parse(localStorage.getItem(STORAGE_KEY_STAGES));
-    } catch(e) {
-      console.warn("Storage inacessível:", e);
-    }
+    } catch(e) {}
 
     const poles = poleCoordsRaw.map((coord, idx) => {
       const poleId = `P-${String(idx + 1).padStart(2, '0')}`;
@@ -797,13 +704,7 @@
         else if (idx < 121) initialStatus = "cava";
       }
 
-      return {
-        id: poleId,
-        index: idx,
-        lat: coord[0],
-        lng: coord[1],
-        status: initialStatus
-      };
+      return { id: poleId, index: idx, lat: coord[0], lng: coord[1], status: initialStatus };
     });
 
     const defaultStages = [
@@ -822,11 +723,57 @@
       return st;
     });
 
-    let map = L.map('map-container', { 
-      preferCanvas: true,
-      tap: true,
-      touchZoom: true
-    }).setView([-17.963, -51.835], 12);
+    function getSupabaseClient() {
+      const cfg = JSON.parse(localStorage.getItem(STORAGE_KEY_SB) || "{}");
+      const url = cfg.url || DEFAULT_SUPABASE_URL;
+      const key = cfg.key || DEFAULT_SUPABASE_KEY;
+      if (!url || !key || !window.supabase) return null;
+      return window.supabase.createClient(url, key);
+    }
+
+    async function carregarDaNuvem() {
+      const sb = getSupabaseClient();
+      const badge = document.getElementById("sync-status-badge");
+      if (!sb) {
+        badge.innerText = "Modo Local (Offline)";
+        return;
+      }
+
+      badge.innerText = "⏳ Sincronizando...";
+      try {
+        const { data, error } = await sb
+          .from("obras_progresso")
+          .select("dados")
+          .eq("id", OBRA_ID)
+          .single();
+
+        if (error) throw error;
+
+        if (data && data.dados) {
+          if (data.dados.poles && Object.keys(data.dados.poles).length > 0) {
+            poles.forEach(p => {
+              if (data.dados.poles[p.id]) p.status = data.dados.poles[p.id];
+            });
+          }
+          if (data.dados.stages) {
+            stages.forEach(st => {
+              if (data.dados.stages[st.key] !== undefined && !st.auto) {
+                st.executed = data.dados.stages[st.key];
+              }
+            });
+          }
+          calculateProgress();
+          badge.innerText = "☁️ Nuvem Sincronizada";
+          badge.style.background = "#065f46";
+        }
+      } catch (err) {
+        console.error("Erro ao carregar do Supabase:", err);
+        badge.innerText = "⚠️ Erro na Nuvem (Local)";
+        badge.style.background = "#991b1b";
+      }
+    }
+
+    let map = L.map('map-container', { preferCanvas: true, tap: true, touchZoom: true }).setView([-17.963, -51.835], 12);
 
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       attribution: 'Tiles &copy; Esri',
@@ -860,13 +807,11 @@
 
     function renderMapMarkers() {
       markerLayerGroup.clearLayers();
-
       const isMobile = window.innerWidth < 768;
       const markerRadius = isMobile ? 7 : 5.5;
 
       poles.forEach((pole) => {
         const visual = getStatusVisual(pole.status);
-
         const circleMarker = L.circleMarker([pole.lat, pole.lng], {
           radius: markerRadius,
           fillColor: visual.color,
@@ -900,11 +845,7 @@
     }
 
     function calculateProgress() {
-      let cavasCount = 0;
-      let engastadosCount = 0;
-      let equipadosCount = 0;
-      let caboLancadoCount = 0;
-      let caboTensionadoCount = 0;
+      let cavasCount = 0, engastadosCount = 0, equipadosCount = 0, caboLancadoCount = 0, caboTensionadoCount = 0;
 
       poles.forEach(p => {
         if (["cava", "engastado", "equipado", "cabo_lancado", "cabo_tensionado"].includes(p.status)) cavasCount++;
@@ -955,7 +896,6 @@
       const formattedTotal = totalWeighted.toFixed(1) + "%";
       document.getElementById("kpi-total-progress").innerText = formattedTotal;
       document.getElementById("gauge-text").textContent = formattedTotal;
-
       document.getElementById("kpi-postes-implantados").innerText = `${engastadosCount} / ${totalPolesCount}`;
       document.getElementById("kpi-cavas-abertas").innerText = `${cavasCount} cavas executadas`;
       document.getElementById("kpi-postes-equipados").innerText = `${equipadosCount} / ${totalPolesCount}`;
@@ -977,17 +917,13 @@
       const toast = document.getElementById("toast-msg");
       toast.innerText = msg;
       toast.classList.add("show");
-      setTimeout(() => {
-        toast.classList.remove("show");
-      }, 3500);
+      setTimeout(() => { toast.classList.remove("show"); }, 3500);
     }
 
-    /* Gestão do Modal e Configuração */
     function abrirModalConfig() {
-      const cfg = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG) || "{}");
-      document.getElementById("cfg-owner").value = cfg.owner || "";
-      document.getElementById("cfg-repo").value = cfg.repo || "";
-      document.getElementById("cfg-token").value = cfg.token || "";
+      const cfg = JSON.parse(localStorage.getItem(STORAGE_KEY_SB) || "{}");
+      document.getElementById("cfg-sb-url").value = cfg.url || DEFAULT_SUPABASE_URL;
+      document.getElementById("cfg-sb-key").value = cfg.key || DEFAULT_SUPABASE_KEY;
       document.getElementById("modal-config").classList.add("active");
     }
 
@@ -996,43 +932,20 @@
     }
 
     function salvarConfiguracoes() {
-      const owner = document.getElementById("cfg-owner").value.trim();
-      const repo = document.getElementById("cfg-repo").value.trim();
-      const token = document.getElementById("cfg-token").value.trim();
+      const url = document.getElementById("cfg-sb-url").value.trim();
+      const key = document.getElementById("cfg-sb-key").value.trim();
 
-      if (!owner || !repo || !token) {
-        alert("Preencha todos os campos da configuração.");
+      if (!url || !key) {
+        alert("Preencha a URL e a Anon Key do Supabase.");
         return;
       }
 
-      localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify({ owner, repo, token }));
+      localStorage.setItem(STORAGE_KEY_SB, JSON.stringify({ url, key }));
       fecharModalConfig();
-      showToast("Configurações do GitHub salvas localmente!");
+      carregarDaNuvem();
+      showToast("Credenciais do Supabase salvas!");
     }
 
-    function gerarHTMLAtualizado() {
-      const docClone = document.documentElement.cloneNode(true);
-      
-      const toastClone = docClone.querySelector("#toast-msg");
-      if (toastClone) toastClone.remove();
-
-      const modalClone = docClone.querySelector("#modal-config");
-      if (modalClone) {
-        modalClone.querySelectorAll("input").forEach(inp => inp.setAttribute("value", ""));
-        modalClone.classList.remove("active");
-      }
-
-      docClone.querySelectorAll("input.input-exec").forEach((inp, idx) => {
-        const manualStages = stages.filter(s => !s.auto);
-        if (manualStages[idx]) {
-          inp.setAttribute("value", manualStages[idx].executed);
-        }
-      });
-
-      return "<!DOCTYPE html>\n" + docClone.outerHTML;
-    }
-
-    /* Salvar localmente e no GitHub */
     async function salvarProgressoTotal() {
       const polesStatusMap = {};
       poles.forEach(p => { polesStatusMap[p.id] = p.status; });
@@ -1043,67 +956,36 @@
       try {
         localStorage.setItem(STORAGE_KEY_POLES, JSON.stringify(polesStatusMap));
         localStorage.setItem(STORAGE_KEY_STAGES, JSON.stringify(stagesMap));
-      } catch(e) {
-        console.warn("Erro ao salvar no localStorage");
-      }
+      } catch(e) {}
 
-      const cfg = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG) || "{}");
-      if (!cfg.owner || !cfg.repo || !cfg.token) {
-        showToast("Salvo localmente! Para sincronizar online, clique em '⚙️ GitHub'.");
+      const sb = getSupabaseClient();
+      if (!sb) {
+        showToast("Salvo localmente! Para salvar na nuvem, configure '⚙️ Supabase'.");
         return;
       }
 
       const saveBtn = document.getElementById("btn-save-main");
-      saveBtn.innerText = "⏳ Sincronizando...";
+      saveBtn.innerText = "⏳ Salvando...";
       saveBtn.disabled = true;
 
       try {
-        const filePath = "index.html";
-        const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${filePath}`;
-        
-        const getRes = await fetch(apiUrl, {
-          headers: {
-            "Authorization": `Bearer ${cfg.token}`,
-            "Accept": "application/vnd.github.v3+json"
-          }
-        });
+        const { error } = await sb
+          .from("obras_progresso")
+          .upsert({
+            id: OBRA_ID,
+            dados: { poles: polesStatusMap, stages: stagesMap },
+            atualizado_em: new Date().toISOString()
+          });
 
-        if (!getRes.ok) {
-          throw new Error(`Repositório ou arquivo não encontrado (Status: ${getRes.status})`);
-        }
+        if (error) throw error;
 
-        const getData = await getRes.json();
-        const currentSha = getData.sha;
-
-        const fullHtml = gerarHTMLAtualizado();
-        const utf8Bytes = new TextEncoder().encode(fullHtml);
-        let binaryString = "";
-        utf8Bytes.forEach(byte => binaryString += String.fromCharCode(byte));
-        const base64Content = btoa(binaryString);
-
-        const putRes = await fetch(apiUrl, {
-          method: "PUT",
-          headers: {
-            "Authorization": `Bearer ${cfg.token}`,
-            "Content-Type": "application/json",
-            "Accept": "application/vnd.github.v3+json"
-          },
-          body: JSON.stringify({
-            message: `Atualização de medição via Dashboard [${new Date().toLocaleDateString('pt-BR')}]`,
-            content: base64Content,
-            sha: currentSha
-          })
-        });
-
-        if (putRes.ok) {
-          showToast("✅ Publicado com sucesso no GitHub!");
-        } else {
-          const errData = await putRes.json();
-          throw new Error(errData.message || "Falha na sincronização");
-        }
+        const badge = document.getElementById("sync-status-badge");
+        badge.innerText = "☁️ Nuvem Sincronizada";
+        badge.style.background = "#065f46";
+        showToast("✅ Progresso salvo no Supabase!");
       } catch (err) {
-        console.error("Erro na sincronização:", err);
-        showToast("⚠️ Salvo localmente, mas falhou no GitHub: " + err.message);
+        console.error("Erro ao salvar no Supabase:", err);
+        showToast("⚠️ Salvo no aparelho, mas falhou na nuvem: " + err.message);
       } finally {
         saveBtn.innerText = "💾 Salvar";
         saveBtn.disabled = false;
@@ -1111,7 +993,18 @@
     }
 
     function baixarHTML() {
-      const fullHtml = gerarHTMLAtualizado();
+      const docClone = document.documentElement.cloneNode(true);
+      const toastClone = docClone.querySelector("#toast-msg");
+      if (toastClone) toastClone.remove();
+
+      const modalClone = docClone.querySelector("#modal-config");
+      if (modalClone) {
+        modalClone.querySelectorAll("input").forEach(inp => inp.setAttribute("value", ""));
+        modalClone.classList.remove("active");
+      }
+
+      const fullHtml = "<!DOCTYPE html>
+" + docClone.outerHTML;
       const blob = new Blob([fullHtml], { type: "text/html;charset=utf-8" });
       const link = document.createElement("a");
       const dataStr = new Date().toISOString().slice(0, 10);
@@ -1135,13 +1028,11 @@
           scale: 2,
           backgroundColor: "#0f172a",
           logging: false,
-          ignoreElements: (element) => {
-            return element.classList.contains("leaflet-control-zoom");
-          }
+          ignoreElements: (element) => element.classList.contains("leaflet-control-zoom")
         });
 
         canvas.toBlob((blob) => {
-          if (!blob) throw new Error("Falha na geração do Blob de imagem.");
+          if (!blob) throw new Error("Falha ao gerar imagem.");
           const link = document.createElement("a");
           const dataStr = new Date().toISOString().slice(0, 10);
           const url = URL.createObjectURL(blob);
@@ -1154,14 +1045,12 @@
           showToast("Print PNG baixado com sucesso!");
         }, "image/png");
       } catch (err) {
-        console.error("Erro na captura de imagem:", err);
-        showToast("Erro ao gerar PNG. Abrindo impressão/PDF...");
+        console.error("Erro na captura:", err);
         window.print();
       }
     }
 
     calculateProgress();
+    carregarDaNuvem();
   </script>
-
-
 </body></html>
